@@ -21,12 +21,25 @@ io.on('connection', (socket) => {
   console.log('new user connected!');
   console.log('Current user: ',currentUser);
 
+  socket.emit('newMessage',{
+    from: 'Admin',
+    text: 'Welcome to chat app',
+    createAt: new Date().getTime()
+  });
+
+  socket.broadcast.emit('newMessage',{
+    from: 'Admin',
+    text: 'New user joined',
+    createAt: new Date().getTime()
+  });
+
 // get new Message from client
   socket.on('createMessage', (message) => {
     console.log('Get new message from client');
     console.log(message);
 
-    io.emit('newMessage',{
+// send Message to other user but not the sender
+    socket.broadcast.emit('newMessage',{
       from: message.from,
       text: message.text,
       createAt: new Date().getTime()

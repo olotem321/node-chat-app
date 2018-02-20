@@ -3,6 +3,7 @@ var socket = io();
 //When connect to the server
 socket.on('connect', function() {
   console.log('Connected to server');
+
 });
 
 // disconnect event : fire when connection drop
