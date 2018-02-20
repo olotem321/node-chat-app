@@ -26,7 +26,11 @@ io.on('connection', (socket) => {
     console.log('Get new message from client');
     console.log(message);
 
-    io.emit('newMessage', message);
+    io.emit('newMessage',{
+      from: message.from,
+      text: message.text,
+      createAt: new Date().Time()
+    });
 
   });
 
