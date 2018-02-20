@@ -21,29 +21,20 @@ io.on('connection', (socket) => {
   console.log('new user connected!');
   console.log('Current user: ',currentUser);
 
-// send Email to client
-  socket.emit('newEmail', {
-    from: 'ds@example.com',
-    text: 'Hey, this is my email',
-    createAt: 123
-  });
-
-// receive new Email from client
-  socket.on('createEmail', (newEmail) => {
-    console.log('CreateEmail: ', newEmail);
-  });
-
 // get new Message from client
   socket.on('createMessage', (message) => {
     console.log('Get new message from client');
     console.log(message);
+
+    io.emit('newMessage', message);
+
   });
 
   //send message to client
-  socket.emit('newMessage',{
-    user: 'Somitme',
-    content: 'Tay is so cool'
-  });
+  // socket.emit('newMessage',{
+  //   user: 'Somitme',
+  //   content: 'Tay is so cool'
+  // });
 
   socket.on('disconnect', () => {
     currentUser--;
