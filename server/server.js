@@ -4,7 +4,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 const publicPath = path.join(__dirname, '../public');
-const {generateMessage} = require('./utils/generateMessage.js');
+const {generateMessage, generateLocationMessage} = require('./utils/generateMessage.js');
 
 const port = process.env.PORT || 3000;
 
@@ -36,20 +36,14 @@ io.on('connection', (socket) => {
 
     callback(false);
 
-// send Message to other user but not the sender
-    // socket.broadcast.emit('newMessage',{
-    //   from: message.from,
-    //   text: message.text,
-    //   createAt: new Date().getTime()
-    // });
-
   });
 
-  //send message to client
-  // socket.emit('newMessage',{
-  //   user: 'Somitme',
-  //   content: 'Tay is so cool'
-  // });
+// Get lcoation from client
+
+  socket.on('createLocationMessage', (message) => {
+    io.emit('newLocationMessage', generateLocationMessage('User', message.latitude,message.longitude));
+  });
+
 
   socket.on('disconnect', () => {
     currentUser--;
