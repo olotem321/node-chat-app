@@ -15,25 +15,28 @@ socket.on('disconnect', function() {
 
 // Get new message from server
 socket.on('newMessage', function(message) {
-    console.log('Get new message from server');
-    console.log(message);
-
-    var li = $('<li></li>');
     var formatedTime = moment(message.createAt).format('hh:mm a');
 
-    li.text(`${message.from} ${formatedTime}: ${message.text}`);
+    var template = $('#message-template').html();
+    var html = Mustache.render(template, {
+      text: message.text,
+      from: message.from,
+      formatedTime: formatedTime
+    });
 
-    $('#messages').append(li);
+    $('#messages').append(html);
 });
 
 socket.on('newLocationMessage', function(message){
+
+  var template = $('#location-message-template').html();
   var formatedTime = moment(message.createAt).format('hh:mm a');
-  var li = $('<li></li>');
-  var a = $('<a target="_blank">My current location</a>')
-  li.text(`${message.from} ${formatedTime}: `);
-  a.attr('href', message.url);
-  li.append(a);
-  $('#messages').append(li);
+  var html = Mustache.render(template, {
+    from: message.from,
+    formatedTime: formatedTime,
+    url: message.url
+  })
+  $('#messages').append(html);
 });
 
 
