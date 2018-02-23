@@ -18,7 +18,26 @@ function scrollToBottom() {
 //When connect to the server
 socket.on('connect', function() {
   console.log('Connected to server');
+  var params = $.deparam(window.location.search);
+  socket.emit('join',params, function(err){
+    if(err){
+      // there is error
+      alert(err);
+      window.location.href = '/';
+    }else {
+      // there is no error
+      console.log('No error');
+    }
+  });
+});
 
+socket.on('setRoomName', function(name) {
+  var template = $('#chatRoomName').html();
+  var html = Mustache.render(template, {
+    name
+  });
+
+  $('.chatRoom').append(html);
 });
 
 // disconnect event : fire when connection drop
@@ -26,6 +45,18 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
   console.log('Disconnect to server');
 });
+
+// update user list
+socket.on('updateUserList', function(users) {
+  var ol = $('<ol></ol>');
+
+  users.forEach(function(user){
+    ol.append($('<li></li>').text(user))
+  });
+
+  jQuery('#users').html(ol);
+});
+
 
 
 // Get new message from server
@@ -57,16 +88,14 @@ socket.on('newLocationMessage', function(message){
 
 
 
+
 $('#message-form').on('submit', function (e){
   e.preventDefault();
 
   var messageTextbox = $('[name=message]');
 
-  socket.emit('createMessage', {
-    from: 'User',
-    text: messageTextbox.val()
-  }, function(){
-      messageTextbox.val('')
+  socket.emit('createMessage', messageTextbox.val() , function(){
+      messageTextbox.val('');
   });
 });
 
